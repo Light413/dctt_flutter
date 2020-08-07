@@ -15,7 +15,8 @@
 [ http://dancheng0394.com](http://dancheng0394.com)
 
 #### 效果预览
-[](https://github.com/Light413/dctt_flutter/blob/master/screenshot/homegif.gif?raw=true)
+
+![](https://github.com/Light413/dctt_flutter/blob/master/screenshot/homegif.gif?raw=true)
 
 
 效果图1 | 效果图2
