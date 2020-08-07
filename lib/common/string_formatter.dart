@@ -1,0 +1,14 @@
+////////////////////////////////////////////////////////////////////////////////
+// string_formatter.dart
+// dctt_flutter
+// lastModified 2020-08-05
+// Created by Light413. on 2020-08-05
+// Copyright ©2020 Light413. All rights reserved.
+////////////////////////////////////////////////////////////////////////////////
+
+///删除字符中换行
+String deleteLine(String str) {
+  var s = str;
+  s = str.replaceAll("\n", "");
+  return s;
+}

@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 import 'dart:io';
 import 'package:dcttflutter/common/colors.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'common/iconfont.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    print("MyApp build");
     return MaterialApp(
       title: '郸城头条',
       theme: ThemeData(
@@ -56,6 +58,39 @@ class MyHomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
   final String title;
+  List<BottomNavigationBarItem> _barItem = [
+    BottomNavigationBarItem(
+        icon: Icon(TTFont.tabHomeIcon), title: Text('首页')),
+    BottomNavigationBarItem(
+        icon: Icon(TTFont.tabThemeIcon), title: Text('社区')),
+    BottomNavigationBarItem(
+      icon: Icon(
+        TTFont.tabPublishIcon,
+        color: Color(0xffff4500),
+        size: 22,
+      ),
+      title: Text(
+        '发布',
+        style: TextStyle(color: tt_theme_color),
+      ),
+    ),
+    BottomNavigationBarItem(
+        icon: Icon(TTFont.tabListIcon), title: Text('生活')),
+    BottomNavigationBarItem(icon: Icon(TTFont.tabMeIcon), title: Text('我的'))
+  ];
+
+  static final  Widget tab1 = Theme(data: ThemeData(primaryColor: Color(0xfff5f5f5)), child: HomePage());
+  static final Widget tab2 = Community();
+  static final Widget tab3 = Theme(
+      data: ThemeData(primaryColor: tt_theme_color, visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      child: Publish()
+  );
+  static final Widget tab4 = Theme(data: ThemeData(primaryColor: tt_theme_color), child: Life());
+  static final Widget tab5 = Theme(data: ThemeData(primaryColor: tt_theme_color), child: Me());
+
+  List<Widget> _pageList = [tab1,tab2,tab3,tab4,tab5];
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -71,46 +106,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<BottomNavigationBarItem> _barItem = [
-      BottomNavigationBarItem(
-          icon: Icon(TTFont.tabHomeIcon), title: Text('首页')),
-      BottomNavigationBarItem(
-          icon: Icon(TTFont.tabThemeIcon), title: Text('社区')),
-      BottomNavigationBarItem(
-        icon: Icon(
-          TTFont.tabPublishIcon,
-          color: Color(0xffff4500),
-          size: 22,
-        ),
-        title: Text(
-          '发布',
-          style: TextStyle(color: tt_theme_color),
-        ),
-      ),
-      BottomNavigationBarItem(
-          icon: Icon(TTFont.tabListIcon), title: Text('生活')),
-      BottomNavigationBarItem(icon: Icon(TTFont.tabMeIcon), title: Text('我的'))
-    ];
+    return CupertinoTabScaffold(
+        resizeToAvoidBottomInset: false,
+        tabBar: CupertinoTabBar(
+      iconSize: 22,
+      activeColor: Color.fromARGB(255, 68, 68, 68),
+      inactiveColor:Color(0xff929292) ,
 
-    List<Widget> _pageList = [
-
-      Theme(data: ThemeData(primaryColor: Color(0xfff5f5f5)), child: HomePage()),
-      Community(),
-
-      Theme(
-          data: ThemeData(primaryColor: tt_theme_color, visualDensity: VisualDensity.adaptivePlatformDensity,
-          ),
-          child: Publish()
-      ),
-
-      Theme(data: ThemeData(primaryColor: tt_theme_color), child: Life()),
-      Theme(data: ThemeData(primaryColor: tt_theme_color), child: Me())
-    ];
+      items: widget._barItem,
+    ), tabBuilder: (ctx , index){
+      return widget._pageList[index];
+    });
 
     return Scaffold(
-      body: _pageList[_currentIndex],
+      body: widget._pageList[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: _barItem,
+        items: widget._barItem,
         iconSize: 22,
         currentIndex: _currentIndex,
         onTap: _tapAction,
@@ -120,13 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
         unselectedFontSize: 11,
         type: BottomNavigationBarType.fixed,
       ),
-
-      /*floatingActionButton: FloatingActionButton(
-      onPressed: (){},
-      child: Icon(Icons.add),
-//      tooltip: '发布',
-    ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,*/
     );
   }
 }

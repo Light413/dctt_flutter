@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:dio/dio.dart';
+
 ////////////////////////////////////////////////////////////////////////////////
 // api.dart
 // dctt_flutter
@@ -42,3 +45,66 @@ const usehelp_url = "p/usehelp.html";
 const privacy_agreement_url = "p/userPrivacy.html";
 const feedbackList_url = "p/feedbackList.html";
 const joinus_url = "p/joinus.html";
+
+///接口请求操作
+void httpRequest(String httpMethod, String path,{Map<String, dynamic>option,  Function successCallBack, Function errorCallBack})
+{
+  Future<Response> _request(String path , {Map option,String method = 'get'}) async {
+    var cf = BaseOptions(
+      baseUrl: BASE_URL,
+      contentType: Headers.formUrlEncodedContentType,
+      connectTimeout: 60000,//超时60s
+      receiveTimeout: 60000
+    );
+
+    var url =  path;
+    var dio = new Dio(cf);
+    /*//charlessproxy抓包设置代理
+  (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
+    // config the http client
+    client.findProxy = (uri) {
+      //proxy all request to localhost:8888
+      return "PROXY 172.20.145.20:8888"; //这里将localhost设置为自己电脑的IP，其他不变，注意上线的时候一定记得把代理去掉
+    };
+    // you can also create a HttpClient to dio
+    // return HttpClient();
+  };
+  */
+
+    var response;
+    if(method == "get"){
+      response  = await dio.get(url,queryParameters: option);
+    }else{
+      response  = await dio.post(url,data: option);
+    }
+
+    return response;
+  }
+
+  _request(path, option: option , method: httpMethod).then((value) {
+    print('$path-------ok');
+    Map obj = JsonDecoder().convert(value.toString());
+    if(obj['status'] == 200 && successCallBack != null){
+      successCallBack(obj['body']);
+    }else{
+      if(errorCallBack != null){
+        errorCallBack(obj['msg'] ?? "服务器返回错误");
+      }
+    }
+  }).catchError((err) {
+    var errStr = err.toString() ?? "服务器返回错误";
+    print("!!!!!!!!!!!-" + errStr);
+    errorCallBack(errStr);
+  }).whenComplete(() {
+    //print("本次请求执行完成");
+  });
+}
+
+///GET方法请求
+void apiGetRequest(String path,{Map<String, dynamic>option,  Function successCallBack, Function errorCallBack}){
+  httpRequest('get', path , option: option,successCallBack: successCallBack,errorCallBack: errorCallBack);
+}
+///POST方法请求
+void apiPostRequest(String path,{Map<String, dynamic>option,  Function successCallBack, Function errorCallBack}){
+  httpRequest('post', path , option: option,successCallBack: successCallBack,errorCallBack: errorCallBack);
+}
